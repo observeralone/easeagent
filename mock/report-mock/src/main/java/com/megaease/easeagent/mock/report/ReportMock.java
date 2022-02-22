@@ -102,6 +102,7 @@ public class ReportMock {
                 LOGGER.warn("span<traceId({}), id({}), name({}), kind({})> not start(), skip it.", span.traceId(), span.id(), span.name(), span.kind());
                 return;
             }
+            System.out.println(String.format("========================= set span<traceId(%s), id(%s), name(%s), kind(%s)>", span.traceId(), span.id(), span.name(), span.kind()));
             // MockSpan mockSpan = new ZipkinMockSpanImpl(span);
             LAST_SPAN.set(span);
             try {
@@ -181,6 +182,7 @@ public class ReportMock {
     }
 
     public static void cleanLastSpan() {
+        System.out.println("=============== clean Span");
         LAST_SPAN.set(null);
     }
 }

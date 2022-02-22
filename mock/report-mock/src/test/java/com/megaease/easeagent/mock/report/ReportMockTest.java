@@ -28,5 +28,6 @@ public class ReportMockTest {
     public void getAgentReport() {
         AgentReport agentReport = ReportMock.getAgentReport();
         assertNotNull(agentReport);
+        ReportMock.cleanLastSpan();
     }
 }
