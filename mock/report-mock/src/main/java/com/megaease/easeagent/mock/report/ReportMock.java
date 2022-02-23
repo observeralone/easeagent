@@ -175,11 +175,11 @@ public class ReportMock {
         }
     }
 
-    public static synchronized ReportSpan getLastSpan() {
+    public static ReportSpan getLastSpan() {
         return lastSpan;
     }
 
-    public static synchronized void cleanLastSpan() {
+    public static void cleanLastSpan() {
         lastSpan = null;
     }
 }
