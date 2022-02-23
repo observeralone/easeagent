@@ -17,8 +17,10 @@
 
 package com.megaease.easeagent.mock.plugin.api.utils;
 
+import brave.TracerTestUtils;
 import com.megaease.easeagent.mock.metrics.MockMetricUtils;
 import com.megaease.easeagent.mock.report.ReportMock;
+import com.megaease.easeagent.mock.zipkin.TracingProviderMock;
 import com.megaease.easeagent.plugin.api.middleware.Redirect;
 import com.megaease.easeagent.plugin.api.middleware.ResourceConfig;
 import com.megaease.easeagent.plugin.bridge.EaseAgent;
@@ -43,6 +45,7 @@ public class ContextUtils {
         EaseAgent.initializeContextSupplier.get().clear();
         MockMetricUtils.clearAll();
         resetRedirect();
+        TracingProviderMock.cleanPendingSpans();
         ReportMock.cleanLastSpan();
     }
 

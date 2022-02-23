@@ -259,7 +259,8 @@ public class SpanImplTest {
     public void flush() {
         Span eSpan = SpanImpl.build(tracing, tracing.tracer().nextSpan(), injector);
         eSpan.start();
-        ReportMock.runForSpan(eSpan::flush, Assert::assertNotNull);
+        ReportMock.runForSpan(eSpan::flush, Assert::assertNull);
+        assertNotNull(ReportMock.getLastSkipSpan());
     }
 
     @Test

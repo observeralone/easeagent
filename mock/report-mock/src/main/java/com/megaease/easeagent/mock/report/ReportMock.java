@@ -43,8 +43,9 @@ public class ReportMock {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportMock.class);
     private static final AgentReport AGENT_REPORT = new MockAgentReport(DefaultAgentReport.create(ConfigMock.getCONFIGS()));
 
-    public static volatile boolean printSpan = false;
+    public static volatile boolean debug = false;
     private static volatile ReportSpan lastSpan = null;
+    private static volatile ReportSpan lastSkipSpan = null;
     private static volatile SpanReportMock spanReportMock = null;
     private static volatile Reporter metricReportMock = null;
     private static volatile JsonReporter metricJsonReport = null;
@@ -86,17 +87,6 @@ public class ReportMock {
         }
     }
 
-    public static class Error extends RuntimeException {
-        private final ReportSpan span;
-
-        public Error(ReportSpan span) {
-            this.span = span;
-        }
-
-        public void printSpanInfo() {
-        }
-    }
-
     static class MockAgentReport implements AgentReport {
         private final AgentReport agentReport;
         private final MockMetricReporter pluginMetricReporter;
@@ -111,11 +101,17 @@ public class ReportMock {
             agentReport.report(span);
             if (!SpanUtils.isValidSpan(span)) {
                 LOGGER.warn("span<traceId({}), id({}), name({}), kind({})> not start(), skip it.", span.traceId(), span.id(), span.name(), span.kind());
+                lastSkipSpan = span;
+                return;
+            }
+            if (span.duration() == 0) {
+                lastSkipSpan = span;
+                System.out.println(String.format("span<traceId(%s), id(%s), name(%s), kind(%s), timestamp(%s) duration(%s) not finish, skip it.", span.traceId(), span.id(), span.name(), span.kind(), span.timestamp(), span.duration()));
                 return;
             }
             // MockSpan mockSpan = new ZipkinMockSpanImpl(span);
             lastSpan = span;
-            if (printSpan) {
+            if (debug) {
                 new RuntimeException(String.format("span<traceId(%s), id(%s), name(%s), kind(%s), timestamp(%s) duration(%s).", span.traceId(), span.id(), span.name(), span.kind(), span.timestamp(), span.duration())).printStackTrace();
             }
             try {
@@ -195,7 +191,10 @@ public class ReportMock {
     }
 
     public static synchronized void cleanLastSpan() {
-        System.out.println("======================= clean Span");
         lastSpan = null;
+    }
+
+    public static ReportSpan getLastSkipSpan() {
+        return lastSkipSpan;
     }
 }
