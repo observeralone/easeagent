@@ -46,6 +46,7 @@ public class LastJsonReporter implements JsonReporter {
     @Override
     public void report(List<Map<String, Object>> json) {
         if (filter == null) {
+            System.out.println("==================== set metric 1");
             reference.set(json);
             signalAll();
         }
@@ -56,6 +57,7 @@ public class LastJsonReporter implements JsonReporter {
             }
         }
         if (!result.isEmpty()) {
+            System.out.println("==================== set metric 2");
             reference.set(result);
             signalAll();
         }
@@ -93,16 +95,19 @@ public class LastJsonReporter implements JsonReporter {
     public List<Map<String, Object>> waitOne(long time, TimeUnit unit) {
         List<Map<String, Object>> result = reference.get();
         if (result != null) {
+            System.out.println("==================== get metric");
             return result;
         }
         if (!wait(time, unit)) {
             return null;
         }
+        System.out.println("==================== wait metric");
         return reference.get();
     }
 
 
     public void clean() {
+        System.out.println("==================== clean metric");
         reference.set(null);
     }
 }
