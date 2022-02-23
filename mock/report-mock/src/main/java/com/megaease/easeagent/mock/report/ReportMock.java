@@ -36,7 +36,6 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -44,7 +43,7 @@ public class ReportMock {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportMock.class);
     private static final AgentReport AGENT_REPORT = new MockAgentReport(DefaultAgentReport.create(ConfigMock.getCONFIGS()));
 
-    private static final AtomicReference<ReportSpan> LAST_SPAN = new AtomicReference<>();
+    private static volatile ReportSpan lastSpan = null;
     private static volatile SpanReportMock spanReportMock = null;
     private static volatile Reporter metricReportMock = null;
     private static volatile JsonReporter metricJsonReport = null;
@@ -102,9 +101,8 @@ public class ReportMock {
                 LOGGER.warn("span<traceId({}), id({}), name({}), kind({})> not start(), skip it.", span.traceId(), span.id(), span.name(), span.kind());
                 return;
             }
-            System.out.println(String.format("========================= set span<traceId(%s), id(%s), name(%s), kind(%s)>", span.traceId(), span.id(), span.name(), span.kind()));
             // MockSpan mockSpan = new ZipkinMockSpanImpl(span);
-            LAST_SPAN.set(span);
+            lastSpan = span;
             try {
                 SpanReportMock spanReportMock = ReportMock.spanReportMock;
                 if (spanReportMock != null) {
@@ -177,12 +175,11 @@ public class ReportMock {
         }
     }
 
-    public static ReportSpan getLastSpan() {
-        return LAST_SPAN.get();
+    public static synchronized ReportSpan getLastSpan() {
+        return lastSpan;
     }
 
-    public static void cleanLastSpan() {
-        System.out.println("=============== clean Span");
-        LAST_SPAN.set(null);
+    public static synchronized void cleanLastSpan() {
+        lastSpan = null;
     }
 }
