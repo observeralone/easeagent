@@ -164,7 +164,7 @@ public class ReportMock {
         }
     }
 
-    public static void runForSpan(Runnable runnable, Consumer<ReportSpan> callback) {
+    public static synchronized void runForSpan(Runnable runnable, Consumer<ReportSpan> callback) {
         AtomicReferenceReportMock atomicReferenceReportMock = new AtomicReferenceReportMock();
         setSpanReportMock(atomicReferenceReportMock);
         try {
@@ -175,11 +175,11 @@ public class ReportMock {
         }
     }
 
-    public static ReportSpan getLastSpan() {
+    public static synchronized ReportSpan getLastSpan() {
         return lastSpan;
     }
 
-    public static void cleanLastSpan() {
+    public static synchronized void cleanLastSpan() {
         lastSpan = null;
     }
 }

@@ -85,11 +85,11 @@ public class LastJsonReporter implements JsonReporter {
         return true;
     }
 
-    public List<Map<String, Object>> getLast() {
+    public synchronized List<Map<String, Object>> getLast() {
         return data;
     }
 
-    public List<Map<String, Object>> waitOne(long time, TimeUnit unit) {
+    public synchronized List<Map<String, Object>> waitOne(long time, TimeUnit unit) {
         List<Map<String, Object>> result = data;
         if (result != null) {
             return result;
@@ -101,7 +101,7 @@ public class LastJsonReporter implements JsonReporter {
     }
 
 
-    public void clean() {
+    public synchronized void clean() {
         data = null;
     }
 }
