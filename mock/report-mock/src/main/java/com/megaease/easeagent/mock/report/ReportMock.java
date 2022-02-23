@@ -103,6 +103,7 @@ public class ReportMock {
             }
             // MockSpan mockSpan = new ZipkinMockSpanImpl(span);
             lastSpan = span;
+            System.out.println("======================= set Span");
             try {
                 SpanReportMock spanReportMock = ReportMock.spanReportMock;
                 if (spanReportMock != null) {
@@ -180,6 +181,7 @@ public class ReportMock {
     }
 
     public static synchronized void cleanLastSpan() {
+        System.out.println("======================= clean Span");
         lastSpan = null;
     }
 }
