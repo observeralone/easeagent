@@ -112,6 +112,7 @@ public class GatewayServerTracingInterceptorTest {
 
     @Test
     public void finishCallback() throws InterruptedException {
+        ReportMock.printSpan = true;
         GatewayServerTracingInterceptor interceptor = new GatewayServerTracingInterceptor();
         Context context = EaseAgent.getContext();
         MockServerWebExchange mockServerWebExchange = TestServerWebExchangeUtils.mockServerWebExchange();
@@ -126,6 +127,7 @@ public class GatewayServerTracingInterceptorTest {
         AtomicBoolean atomicBoolean = new AtomicBoolean(false);
         mockServerWebExchange.getAttributes().put(GatewayCons.CLIENT_RECEIVE_CALLBACK_KEY, (Consumer<ServerWebExchange>) serverWebExchange -> atomicBoolean.set(true));
         AgentMono agentMono = (AgentMono) methodInfo.getRetValue();
+        ReportMock.printSpan = false;
         Thread thread = new Thread(() -> agentMono.getFinish().accept(agentMono.getMethodInfo(), agentMono.getAsyncContext()));
         thread.start();
         thread.join();

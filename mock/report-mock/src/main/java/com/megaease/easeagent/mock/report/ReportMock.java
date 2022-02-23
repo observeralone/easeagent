@@ -43,6 +43,7 @@ public class ReportMock {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportMock.class);
     private static final AgentReport AGENT_REPORT = new MockAgentReport(DefaultAgentReport.create(ConfigMock.getCONFIGS()));
 
+    public static volatile boolean printSpan = false;
     private static volatile ReportSpan lastSpan = null;
     private static volatile SpanReportMock spanReportMock = null;
     private static volatile Reporter metricReportMock = null;
@@ -85,6 +86,17 @@ public class ReportMock {
         }
     }
 
+    public static class Error extends RuntimeException {
+        private final ReportSpan span;
+
+        public Error(ReportSpan span) {
+            this.span = span;
+        }
+
+        public void printSpanInfo() {
+        }
+    }
+
     static class MockAgentReport implements AgentReport {
         private final AgentReport agentReport;
         private final MockMetricReporter pluginMetricReporter;
@@ -103,7 +115,9 @@ public class ReportMock {
             }
             // MockSpan mockSpan = new ZipkinMockSpanImpl(span);
             lastSpan = span;
-            System.out.println("======================= set Span");
+            if (printSpan) {
+                new RuntimeException(String.format("span<traceId(%s), id(%s), name(%s), kind(%s), timestamp(%s) duration(%s).", span.traceId(), span.id(), span.name(), span.kind(), span.timestamp(), span.duration())).printStackTrace();
+            }
             try {
                 SpanReportMock spanReportMock = ReportMock.spanReportMock;
                 if (spanReportMock != null) {
