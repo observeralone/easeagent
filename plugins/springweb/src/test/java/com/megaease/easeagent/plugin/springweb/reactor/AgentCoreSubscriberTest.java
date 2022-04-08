@@ -167,6 +167,7 @@ public class AgentCoreSubscriberTest {
         agentCoreSubscriber.onComplete();
         assertTrue(mockCoreSubscriber.onComplete.get());
         mockSpan = MockEaseAgent.getLastSpan();
+        System.out.println(String.format("span id : %s %s", mockSpan.traceId(), mockSpan.id()));
         assertFalse(mockSpan.hasError());
 
     }
